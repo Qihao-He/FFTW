@@ -47,22 +47,9 @@ int main(int argc, char *argv[]){
 
     span_log2_N = log2_M - log2_N;
 
-// create a pointer to 2D 3D array
-
-    double time_elapsed[span_log2_N][loops][4]; //3D array
-    for(i=0; i<span_log2_N; i++){
-        for(j=0; j<loops; j++){
-            for(k=0; k<4; k++){
-                time_elapsed[i][j][k] = 0;
-            }
-        }
-    }
-    double REL_RMS_ERR[span_log2_N][loops]; //2D array
-    for(i=0; i<span_log2_N; i++){
-        for(j=0; j<loops; j++){
-            REL_RMS_ERR[i][j] = 0;
-        }
-    }
+// initializing 2D, 3D array to 0, create a pointer to 2D 3D array
+    REL_RMS_ERR_init(span_log2_N, loops);
+    time_elapsed_init(span_log2_N, loops);
 
     printf("log2_N,N,Init_T,FFT_T,RMS_T,Total_T\n"); // print out lables for .csv file
 
@@ -100,7 +87,7 @@ unsigned Microseconds(void) {
     return ts.tv_sec*1000000 + ts.tv_nsec/1000;
 }
 
-void REL_RMS_ERR_array(){
+void REL_RMS_ERR_init(int span_log2_N, int loops){
     double REL_RMS_ERR[span_log2_N][loops]; //2D array
     for(i=0; i<span_log2_N; i++){
         for(j=0; j<loops; j++){
@@ -109,7 +96,7 @@ void REL_RMS_ERR_array(){
     }
 }
 
-void time_elapsed_array(){
+void time_elapsed_init(int span_log2_N, int loops){
     double time_elapsed[span_log2_N][loops][4]; //3D array
     for(i=0; i<span_log2_N; i++){
         for(j=0; j<loops; j++){
