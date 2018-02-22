@@ -21,6 +21,8 @@ char Usage[] =
     "RMS_C  = number of test repeats, T(1),F(0),     default 1\n";
 
 unsigned Microseconds(void); // not sure about the time profiling for the RPI function
+void REL_RMS_ERR_init(int span_log2_N, int loops, double **REL_RMS_ERR);
+void time_elapsed_init(int span_log2_N, int loops);
 void input_buffer(fftw_complex* in, int N); // input buffer
 void output_RMS(fftw_complex* out, int N, int j, int k); // output REL_RMS_ERR
 void print_RMS(int span_log2_N, int loops); // print out REL_RMS_ERR
