@@ -18,7 +18,7 @@ char Usage[] =
     "log2_N = log2(FFT_length),       log2_N = 8...22\n"
     "log2_M = log2(FFT_length),       log2_M > log2_N\n"
     "loops  = number of test repeats, loops>0,       default 1\n"
-    "RMS_C  = number of test repeats, T(1),F(0),     default 0\n";
+    "RMS_C  = number of test repeats, T(1),F(0),     default 1\n";
 
 unsigned Microseconds(void); // not sure about the time profiling for the RPI function
 void input_buffer(fftw_complex* in, int N); // input buffer
