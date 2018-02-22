@@ -25,10 +25,36 @@ unsigned Microseconds(void) {
     return ts.tv_sec*1000000 + ts.tv_nsec/1000;
 }
 
+void input_buffer(fftx_complex* in){
+    int i;
+    for (i = 0; i < NUM_POINTS; ++i) {
+        double theta = (double)i / (double)NUM_POINTS * M_PI;
+        signal[i][REAL] = 1.0 * cos(10.0 * theta) + 0.5 * cos(25.0 * theta);
+        signal[i][IMAG] = 1.0 * sin(10.0 * theta) + 0.5 * sin(25.0 * theta);
+    }
+}
+
+double output_RMS(fftx_complex* out){
+    double tsq[2];
+    tsq[0]=tsq[1]=0;
+    for (j=0; j<jobs; j++) {
+      
+        out = fft->out + j*fft->step; // output buffer
+
+        freq = j+1;
+        for (i=0; i<N; i++) {
+            double re = cos(2*GPU_FFT_PI*freq*i/N);
+            tsq[0] += pow(re, 2);
+            tsq[1] += pow(re - out[i].re, 2) + pow(out[i].im, 2);
+        }
+        REL_RMS_ERR[l][k] = sqrt(tsq[1] / tsq[0]);
+    }
+}
+
 int main(int argc, char *argv[]){
     int i,j,k,l, loops, freq, log2_N, log2_M, N, RMS_C, span_log2_N;
     unsigned t[4];
-    double tsq[2];
+
 
     fftw_complex *in, *out; //in, out buffer
     fftw_plan p; //fftw_plan prepare
@@ -72,24 +98,10 @@ int main(int argc, char *argv[]){
             p = fftw_plan_dft_1d(N, in, out, FFTW_FORWARD, FFTW_ESTIMATE);
 
             t[1] = Microseconds();
-
             fftw_execute(p); /* repeat as needed */
-
             t[2] = Microseconds();
 
-            if(RMS_C == 1){
-                tsq[0]=tsq[1]=0;
-                for (j=0; j<jobs; j++) {
-                    base = fft->out + j*fft->step; // output buffer
-                    freq = j+1;
-                    for (i=0; i<N; i++) {
-                        double re = cos(2*GPU_FFT_PI*freq*i/N);
-                        tsq[0] += pow(re, 2);
-                        tsq[1] += pow(re - base[i].re, 2) + pow(base[i].im, 2);
-                    }
-                    REL_RMS_ERR[l][k] = sqrt(tsq[1] / tsq[0]);
-                }
-            }
+            if(RMS_C == 1) REL_RMS_ERR = output_RMS();
             t[3] = Microseconds();
             printf("%i,%i,%d,%d,%d,%d\n",log2_N + l,N,t[1] - t[0],t[2] - t[1],
             t[3] - t[2],t[3] - t[0]);
