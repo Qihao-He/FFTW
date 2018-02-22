@@ -88,6 +88,7 @@ unsigned Microseconds(void) {
 }
 
 void REL_RMS_ERR_init(int span_log2_N, int loops){
+    int i, j;
     double REL_RMS_ERR[span_log2_N][loops]; //2D array
     for(i=0; i<span_log2_N; i++){
         for(j=0; j<loops; j++){
@@ -97,6 +98,7 @@ void REL_RMS_ERR_init(int span_log2_N, int loops){
 }
 
 void time_elapsed_init(int span_log2_N, int loops){
+    int i,j,k;
     double time_elapsed[span_log2_N][loops][4]; //3D array
     for(i=0; i<span_log2_N; i++){
         for(j=0; j<loops; j++){
@@ -116,7 +118,7 @@ void input_buffer(fftw_complex* in, int N){
 
 // output REL_RMS_ERR
 void output_RMS(fftw_complex* out, char REL_RMS_ERR[][], int N, int j, int k){
-    // int i;
+    int i;
     double tsq[2], a;
     tsq[0]=tsq[1]=0;
     a = 2 * M_PI / N;
@@ -130,6 +132,7 @@ void output_RMS(fftw_complex* out, char REL_RMS_ERR[][], int N, int j, int k){
 
 // print out REL_RMS_ERR
 void print_RMS(int span_log2_N, int loops){
+    int i,j;
     for (i = 0; i < span_log2_N; i++) {
       printf("REL_RMS_ERR for log2_N:%d\n", log2_N + i);
         for (j = 0; j < loops; j++) {
