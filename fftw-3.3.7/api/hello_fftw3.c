@@ -59,8 +59,8 @@ int main(int argc, char *argv[]){
     for(l=0; l<span_log2_N; l++){
         log2_N = log2_N + l;
         N = 1<<log2_N; // initializing FFT length: N
-        in = (fftw_complex*) fftw_malloc(sizeof(fftw_complex) * N);
-        out = (fftw_complex*) fftw_malloc(sizeof(fftw_complex) * N);
+        in = (fftw_complex *)fftw_malloc(sizeof(fftw_complex) * N);
+        out = (fftw_complex *)fftw_malloc(sizeof(fftw_complex) * N);
         p = fftw_plan_dft_1d(N, in, out, FFTW_BACKWARD, FFTW_ESTIMATE);
 
         for (k=0; k<loops; k++) {
@@ -90,7 +90,7 @@ unsigned Microseconds(void) {
     return ts.tv_sec*1000000 + ts.tv_nsec/1000;
 }
 
-void REL_RMS_ERR_init(int span_log2_N, int loops, double REL_RMS_ERR[span_log2_N][]){
+void REL_RMS_ERR_init(int span_log2_N, int loops, double **REL_RMS_ERR){
     int i, j;
     for(i=0; i<span_log2_N; i++){
         for(j=0; j<loops; j++){
@@ -110,16 +110,15 @@ void time_elapsed_init(int span_log2_N, int loops){
         }
     }
 }
-
 // input buffer
-void input_buffer(fftw_complex* in, int N){
+void input_buffer(fftw_complex *in, int N){
     int i;
     for (i = 0; i < N; i++) in[i][REAL] = in[i][IMAG] = 0;
     in[1][REAL] = in[N-1][REAL] = 0.5;
 }
 
 // output REL_RMS_ERR
-void output_RMS(fftw_complex* out, int span_log2_N, double REL_RMS_ERR[span_log2_N][], int N, int j, int k){
+void output_RMS(fftw_complex *out, int span_log2_N, double **REL_RMS_ERR, int N, int j, int k){
     int i;
     double tsq[2], a;
     tsq[0]=tsq[1]=0;
