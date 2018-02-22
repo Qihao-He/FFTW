@@ -9,6 +9,8 @@ Author:Qihao He
 #include <math.h>
 #include <time.h>
 #include <fftw3.h>
+#define REAL 0
+#define IMAG 1
 // #include <unistd.h>
 
 char Usage[] =
@@ -25,27 +27,25 @@ unsigned Microseconds(void) {
     return ts.tv_sec*1000000 + ts.tv_nsec/1000;
 }
 
-void input_buffer(fftx_complex* in){
+void input_buffer(fftw_complex* in, int N){
     int i;
-    for (i = 0; i < NUM_POINTS; ++i) {
-        double theta = (double)i / (double)NUM_POINTS * M_PI;
-        signal[i][REAL] = 1.0 * cos(10.0 * theta) + 0.5 * cos(25.0 * theta);
-        signal[i][IMAG] = 1.0 * sin(10.0 * theta) + 0.5 * sin(25.0 * theta);
-    }
+    for (i = 0; i < N; i++) in[i][REAL] = in[i][IMAG] = 0;
+    in[1][REAL] = in[N-1][REAL] = 0.5;
 }
 
-double output_RMS(fftx_complex* out){
+void output_RMS(fftw_complex* out, int N){
+    int i,j;
     double tsq[2];
     tsq[0]=tsq[1]=0;
     for (j=0; j<jobs; j++) {
-      
+
         out = fft->out + j*fft->step; // output buffer
 
         freq = j+1;
         for (i=0; i<N; i++) {
             double re = cos(2*GPU_FFT_PI*freq*i/N);
             tsq[0] += pow(re, 2);
-            tsq[1] += pow(re - out[i].re, 2) + pow(out[i].im, 2);
+            tsq[1] += pow(re - out[i][REAL], 2) + pow(out[i][IMAG], 2);
         }
         REL_RMS_ERR[l][k] = sqrt(tsq[1] / tsq[0]);
     }
@@ -54,7 +54,6 @@ double output_RMS(fftx_complex* out){
 int main(int argc, char *argv[]){
     int i,j,k,l, loops, freq, log2_N, log2_M, N, RMS_C, span_log2_N;
     unsigned t[4];
-
 
     fftw_complex *in, *out; //in, out buffer
     fftw_plan p; //fftw_plan prepare
@@ -71,6 +70,7 @@ int main(int argc, char *argv[]){
     }
 
     span_log2_N = log2_M - log2_N;
+
     double time_elapsed[span_log2_N][loops][4]; //3D array
     for(i=0; i<span_log2_N; i++){
         for(j=0; j<loops; j++){
@@ -85,7 +85,7 @@ int main(int argc, char *argv[]){
             REL_RMS_ERR[i][j] = 0;
         }
     }
-
+// print out lables
     printf("log2_N,N,Init_T,FFT_T,RMS_T,Total_T\n");
 
     for(l=0; l<span_log2_N; l++){
@@ -97,11 +97,13 @@ int main(int argc, char *argv[]){
             out = (fftw_complex*) fftw_malloc(sizeof(fftw_complex) * N);
             p = fftw_plan_dft_1d(N, in, out, FFTW_FORWARD, FFTW_ESTIMATE);
 
+            input_buffer(in, N);
+
             t[1] = Microseconds();
             fftw_execute(p); /* repeat as needed */
             t[2] = Microseconds();
 
-            if(RMS_C == 1) REL_RMS_ERR = output_RMS();
+            if(RMS_C == 1) output_RMS(out, N);
             t[3] = Microseconds();
             printf("%i,%i,%d,%d,%d,%d\n",log2_N + l,N,t[1] - t[0],t[2] - t[1],
             t[3] - t[2],t[3] - t[0]);
@@ -111,6 +113,7 @@ int main(int argc, char *argv[]){
         fftw_free(out);
     }
 
+// print out REL_RMS_ERR
     if(RMS_C == 1){
       for (i = 0; i < span_log2_N; i++) {
         printf("REL_RMS_ERR for log2_N:%d\n", log2_N + i);
