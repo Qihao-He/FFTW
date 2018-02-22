@@ -26,7 +26,9 @@ unsigned Microseconds(void) {
 }
 
 int main(int argc, char *argv[]){
-    int i, loops, freq, log2_N, log2_M, N, RMS_C, span_log2_N;
+    int i,j,k,l, loops, freq, log2_N, log2_M, N, RMS_C, span_log2_N;
+    unsigned t[4];
+    double tsq[2];
 
     fftw_complex *in, *out; //in, out buffer
     fftw_plan p; //fftw_plan prepare
@@ -60,36 +62,52 @@ int main(int argc, char *argv[]){
 
     printf("log2_N,N,Init_T,FFT_T,RMS_T,Total_T\n");
 
-    for (k=0; k<loops; k++) {
-        t[0] = Microseconds();
-        in = (fftw_complex*) fftw_malloc(sizeof(fftw_complex) * N);
-        out = (fftw_complex*) fftw_malloc(sizeof(fftw_complex) * N);
-        p = fftw_plan_dft_1d(N, in, out, FFTW_FORWARD, FFTW_ESTIMATE);
+    for(l=0; l<span_log2_N; l++){
+        N = 1<<(log2_N + l); // FFT length
+        for (k=0; k<loops; k++) {
+            t[0] = Microseconds();
 
-        t[1] = Microseconds();
-        fftw_execute(p); /* repeat as needed */
-        t[2] = Microseconds();
+            in = (fftw_complex*) fftw_malloc(sizeof(fftw_complex) * N);
+            out = (fftw_complex*) fftw_malloc(sizeof(fftw_complex) * N);
+            p = fftw_plan_dft_1d(N, in, out, FFTW_FORWARD, FFTW_ESTIMATE);
 
-        if(RMS_C == 1){
-            tsq[0]=tsq[1]=0;
-            for (j=0; j<jobs; j++) {
-                base = fft->out + j*fft->step; // output buffer
-                freq = j+1;
-                for (i=0; i<N; i++) {
-                    double re = cos(2*GPU_FFT_PI*freq*i/N);
-                    tsq[0] += pow(re, 2);
-                    tsq[1] += pow(re - base[i].re, 2) + pow(base[i].im, 2);
+            t[1] = Microseconds();
+
+            fftw_execute(p); /* repeat as needed */
+
+            t[2] = Microseconds();
+
+            if(RMS_C == 1){
+                tsq[0]=tsq[1]=0;
+                for (j=0; j<jobs; j++) {
+                    base = fft->out + j*fft->step; // output buffer
+                    freq = j+1;
+                    for (i=0; i<N; i++) {
+                        double re = cos(2*GPU_FFT_PI*freq*i/N);
+                        tsq[0] += pow(re, 2);
+                        tsq[1] += pow(re - base[i].re, 2) + pow(base[i].im, 2);
+                    }
+                    REL_RMS_ERR[l][k] = sqrt(tsq[1] / tsq[0]);
                 }
-                REL_RMS_ERR[l][k] = sqrt(tsq[1] / tsq[0]);
             }
+            t[3] = Microseconds();
+            printf("%i,%i,%d,%d,%d,%d\n",log2_N + l,N,t[1] - t[0],t[2] - t[1],
+            t[3] - t[2],t[3] - t[0]);
         }
-        t[3] = Microseconds();
-        printf("%i,%i,%d,%d,%d,%d\n",log2_N + l,N,t[1] - t[0],t[2] - t[1],
-        t[3] - t[2],t[3] - t[0]);
+        fftw_destroy_plan(p);
+        fftw_free(in);
+        fftw_free(out);
     }
 
-    fftw_destroy_plan(p);
-    fftw_free(in);
-    fftw_free(out);
+    if(RMS_C == 1){
+      for (i = 0; i < span_log2_N; i++) {
+        printf("REL_RMS_ERR for log2_N:%d\n", log2_N + i);
+          for (j = 0; j < loops; j++) {
+            printf("%.8f,",REL_RMS_ERR[i][j]);
+          }
+          printf("\n");
+      }
+      printf("\n");
+    }
     return 0;
 }
