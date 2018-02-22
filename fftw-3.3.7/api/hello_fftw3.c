@@ -40,7 +40,7 @@ void input_buffer(fftw_complex* in, int N){
 }
 
 // output REL_RMS_ERR
-void output_RMS(fftw_complex* out, int N, int l, int k){
+void output_RMS(fftw_complex* out, int N, int j, int k){
     int i;
     double tsq[2], a;
     tsq[0]=tsq[1]=0;
@@ -50,7 +50,7 @@ void output_RMS(fftw_complex* out, int N, int l, int k){
         tsq[0] += pow(re, 2);
         tsq[1] += pow(re - out[i][REAL], 2) + pow(out[i][IMAG], 2);
     }
-    REL_RMS_ERR[l][k] = sqrt(tsq[1] / tsq[0]);
+    REL_RMS_ERR[j][k] = sqrt(tsq[1] / tsq[0]);
 }
 
 int main(int argc, char *argv[]){
@@ -104,7 +104,7 @@ int main(int argc, char *argv[]){
             fftw_execute(p); /* repeat as needed */
             t[2] = Microseconds();
 
-            if(RMS_C == 1) output_RMS(out, N, l, k, );
+            if(RMS_C == 1) output_RMS(out, N, l, k);
             t[3] = Microseconds();
             printf("%i,%i,%d,%d,%d,%d\n",log2_N + l,N,t[1] - t[0],t[2] - t[1],
             t[3] - t[2],t[3] - t[0]); //print for .csv file
