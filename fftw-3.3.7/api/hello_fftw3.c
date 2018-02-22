@@ -47,8 +47,10 @@ int main(int argc, char *argv[]){
 
     span_log2_N = log2_M - log2_N;
 
+    double REL_RMS_ERR[span_log2_N][loops]; //2D array
+
 // initializing 2D, 3D array to 0
-    REL_RMS_ERR_init(span_log2_N, loops);
+    REL_RMS_ERR_init(REL_RMS_ERR, span_log2_N, loops);
     time_elapsed_init(span_log2_N, loops);
 // create a pointer to 2D 3D array
 
@@ -88,9 +90,8 @@ unsigned Microseconds(void) {
     return ts.tv_sec*1000000 + ts.tv_nsec/1000;
 }
 
-void REL_RMS_ERR_init(int span_log2_N, int loops){
+void REL_RMS_ERR_init(double REL_RMS_ERR[][],int span_log2_N, int loops){
     int i, j;
-    double REL_RMS_ERR[span_log2_N][loops]; //2D array
     for(i=0; i<span_log2_N; i++){
         for(j=0; j<loops; j++){
             REL_RMS_ERR[i][j] = 0;
@@ -118,7 +119,7 @@ void input_buffer(fftw_complex* in, int N){
 }
 
 // output REL_RMS_ERR
-void output_RMS(fftw_complex* out, char REL_RMS_ERR[][], int N, int j, int k){
+void output_RMS(fftw_complex* out, double REL_RMS_ERR[][], int N, int j, int k){
     int i;
     double tsq[2], a;
     tsq[0]=tsq[1]=0;
