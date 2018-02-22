@@ -27,6 +27,11 @@ unsigned Microseconds(void) {
     return ts.tv_sec*1000000 + ts.tv_nsec/1000;
 }
 
+/* global array for holding the RMS error */
+  double REL_RMS_ERR[span_log2_N][loops]; //2D array
+
+
+
 // input buffer
 void input_buffer(fftw_complex* in, int N){
     int i;
@@ -76,7 +81,7 @@ int main(int argc, char *argv[]){
             }
         }
     }
-    double REL_RMS_ERR[span_log2_N][loops]; //2D array
+
     for(i=0; i<span_log2_N; i++){
         for(j=0; j<loops; j++){
             REL_RMS_ERR[i][j] = 0;
@@ -99,7 +104,7 @@ int main(int argc, char *argv[]){
             fftw_execute(p); /* repeat as needed */
             t[2] = Microseconds();
 
-            if(RMS_C == 1) output_RMS(out, N, l, k);
+            if(RMS_C == 1) output_RMS(out, N, l, k, );
             t[3] = Microseconds();
             printf("%i,%i,%d,%d,%d,%d\n",log2_N + l,N,t[1] - t[0],t[2] - t[1],
             t[3] - t[2],t[3] - t[0]); //print for .csv file
