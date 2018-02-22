@@ -8,7 +8,7 @@ Author:Qihao He
 #include <stdio.h>
 #include <math.h>
 #include <time.h>
-#include <fftw3.h>
+#include "fftw3.h"
 // #include <unistd.h>
 #define REAL 0
 #define IMAG 1
