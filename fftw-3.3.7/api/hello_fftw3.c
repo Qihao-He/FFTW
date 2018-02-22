@@ -47,9 +47,10 @@ int main(int argc, char *argv[]){
 
     span_log2_N = log2_M - log2_N;
 
-// initializing 2D, 3D array to 0, create a pointer to 2D 3D array
+// initializing 2D, 3D array to 0
     REL_RMS_ERR_init(span_log2_N, loops);
     time_elapsed_init(span_log2_N, loops);
+// create a pointer to 2D 3D array
 
     printf("log2_N,N,Init_T,FFT_T,RMS_T,Total_T\n"); // print out lables for .csv file
 
@@ -111,7 +112,7 @@ void time_elapsed_init(int span_log2_N, int loops){
 
 // input buffer
 void input_buffer(fftw_complex* in, int N){
-    // int i;
+    int i;
     for (i = 0; i < N; i++) in[i][REAL] = in[i][IMAG] = 0;
     in[1][REAL] = in[N-1][REAL] = 0.5;
 }
