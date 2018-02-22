@@ -20,38 +20,12 @@ char Usage[] =
     "loops  = number of test repeats, loops>0,       default 1\n"
     "RMS_C  = number of test repeats, T(1),F(0),     default 0\n";
 
-// not sure about the time profiling for the RPI function
-unsigned Microseconds(void) {
-    struct timespec ts;
-    clock_gettime(CLOCK_REALTIME, &ts);
-    return ts.tv_sec*1000000 + ts.tv_nsec/1000;
-}
-
+unsigned Microseconds(void); // not sure about the time profiling for the RPI function
+void input_buffer(fftw_complex* in, int N); // input buffer
+void output_RMS(fftw_complex* out, int N, int j, int k); // output REL_RMS_ERR
+void print_RMS(int span_log2_N, int loops); // print out REL_RMS_ERR
 /* global array for holding the RMS error */
-  double REL_RMS_ERR[span_log2_N][loops]; //2D array
-
-
-
-// input buffer
-void input_buffer(fftw_complex* in, int N){
-    int i;
-    for (i = 0; i < N; i++) in[i][REAL] = in[i][IMAG] = 0;
-    in[1][REAL] = in[N-1][REAL] = 0.5;
-}
-
-// output REL_RMS_ERR
-void output_RMS(fftw_complex* out, int N, int j, int k){
-    int i;
-    double tsq[2], a;
-    tsq[0]=tsq[1]=0;
-    a = 2 * M_PI / N;
-    for (i=0; i<N; i++) {
-        double re = cos(a * i);
-        tsq[0] += pow(re, 2);
-        tsq[1] += pow(re - out[i][REAL], 2) + pow(out[i][IMAG], 2);
-    }
-    REL_RMS_ERR[j][k] = sqrt(tsq[1] / tsq[0]);
-}
+// double REL_RMS_ERR[span_log2_N][loops]; //2D array
 
 int main(int argc, char *argv[]){
     int i,j,k,l, loops, freq, log2_N, log2_M, N, RMS_C, span_log2_N;
@@ -66,12 +40,14 @@ int main(int argc, char *argv[]){
     RMS_C  = argc>4? atoi(argv[4]) : 1;  // RMS_controller
 
     if (!(argc>=2 && argc<=5) || loops<1 || !(RMS_C>=0 && RMS_C<=1) ||
-    log2_N >= log2_M) {
+    log2_N>=log2_M) {
         printf(Usage);
         return -1;
     }
 
     span_log2_N = log2_M - log2_N;
+
+// create a pointer to 2D 3D array
 
     double time_elapsed[span_log2_N][loops][4]; //3D array
     for(i=0; i<span_log2_N; i++){
@@ -81,17 +57,18 @@ int main(int argc, char *argv[]){
             }
         }
     }
-
+    double REL_RMS_ERR[span_log2_N][loops]; //2D array
     for(i=0; i<span_log2_N; i++){
         for(j=0; j<loops; j++){
             REL_RMS_ERR[i][j] = 0;
         }
     }
-// print out lables for .csv file
-    printf("log2_N,N,Init_T,FFT_T,RMS_T,Total_T\n");
+
+    printf("log2_N,N,Init_T,FFT_T,RMS_T,Total_T\n"); // print out lables for .csv file
 
     for(l=0; l<span_log2_N; l++){
-        N = 1<<(log2_N + l); // initializing FFT length: N
+        log2_N = log2_N + l;
+        N = 1<<log2_N; // initializing FFT length: N
         in = (fftw_complex*) fftw_malloc(sizeof(fftw_complex) * N);
         out = (fftw_complex*) fftw_malloc(sizeof(fftw_complex) * N);
         p = fftw_plan_dft_1d(N, in, out, FFTW_BACKWARD, FFTW_ESTIMATE);
@@ -104,26 +81,74 @@ int main(int argc, char *argv[]){
             fftw_execute(p); /* repeat as needed */
             t[2] = Microseconds();
 
-            if(RMS_C == 1) output_RMS(out, N, l, k);
+            if(RMS_C == 1) output_RMS(out, REL_RMS_ERR, N, l, k);
             t[3] = Microseconds();
-            printf("%i,%i,%d,%d,%d,%d\n",log2_N + l,N,t[1] - t[0],t[2] - t[1],
+            printf("%i,%i,%d,%d,%d,%d\n",log2_N,N,t[1] - t[0],t[2] - t[1],
             t[3] - t[2],t[3] - t[0]); //print for .csv file
         }
         fftw_destroy_plan(p);
         fftw_free(in);
         fftw_free(out);
     }
+    if(RMS_C == 1) print_RMS(span_log2_N, loops); // print out REL_RMS_ERR
+    return 0;
+}
+
+unsigned Microseconds(void) {
+    struct timespec ts;
+    clock_gettime(CLOCK_REALTIME, &ts);
+    return ts.tv_sec*1000000 + ts.tv_nsec/1000;
+}
+
+void REL_RMS_ERR_array(){
+    double REL_RMS_ERR[span_log2_N][loops]; //2D array
+    for(i=0; i<span_log2_N; i++){
+        for(j=0; j<loops; j++){
+            REL_RMS_ERR[i][j] = 0;
+        }
+    }
+}
+
+void time_elapsed_array(){
+    double time_elapsed[span_log2_N][loops][4]; //3D array
+    for(i=0; i<span_log2_N; i++){
+        for(j=0; j<loops; j++){
+            for(k=0; k<4; k++){
+                time_elapsed[i][j][k] = 0;
+            }
+        }
+    }
+}
+
+// input buffer
+void input_buffer(fftw_complex* in, int N){
+    // int i;
+    for (i = 0; i < N; i++) in[i][REAL] = in[i][IMAG] = 0;
+    in[1][REAL] = in[N-1][REAL] = 0.5;
+}
+
+// output REL_RMS_ERR
+void output_RMS(fftw_complex* out, char REL_RMS_ERR[][], int N, int j, int k){
+    // int i;
+    double tsq[2], a;
+    tsq[0]=tsq[1]=0;
+    a = 2 * M_PI / N;
+    for (i=0; i<N; i++) {
+        double re = cos(a * i);
+        tsq[0] += pow(re, 2);
+        tsq[1] += pow(re - out[i][REAL], 2) + pow(out[i][IMAG], 2);
+    }
+    REL_RMS_ERR[j][k] = sqrt(tsq[1] / tsq[0]);
+}
 
 // print out REL_RMS_ERR
-    if(RMS_C == 1){
-      for (i = 0; i < span_log2_N; i++) {
-        printf("REL_RMS_ERR for log2_N:%d\n", log2_N + i);
-          for (j = 0; j < loops; j++) {
-            printf("%.8f,",REL_RMS_ERR[i][j]);
-          }
-          printf("\n");
-      }
-      printf("\n");
+void print_RMS(int span_log2_N, int loops){
+    for (i = 0; i < span_log2_N; i++) {
+      printf("REL_RMS_ERR for log2_N:%d\n", log2_N + i);
+        for (j = 0; j < loops; j++) {
+          printf("%.8f,",REL_RMS_ERR[i][j]);
+        }
+        printf("\n");
     }
-    return 0;
+    printf("\n");
 }
