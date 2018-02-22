@@ -52,7 +52,7 @@ int main(int argc, char *argv[]){
     double REL_RMS_ERR[span_log2_N][loops]; //2D array
 
 // initializing 2D, 3D array to 0
-    REL_RMS_ERR_init(REL_RMS_ERR, span_log2_N, loops);
+    REL_RMS_ERR_init(span_log2_N, loops, REL_RMS_ERR);
     time_elapsed_init(span_log2_N, loops);
 // create a pointer to 2D 3D array
 
