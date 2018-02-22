@@ -71,7 +71,7 @@ int main(int argc, char *argv[]){
             fftw_execute(p); /* repeat as needed */
             t[2] = Microseconds();
 
-            if(RMS_C == 1) output_RMS(out, REL_RMS_ERR, N, l, k);
+            if(RMS_C == 1) output_RMS(out,span_log2_N, REL_RMS_ERR, N, l, k);
             t[3] = Microseconds();
             printf("%i,%i,%d,%d,%d,%d\n",log2_N,N,t[1] - t[0],t[2] - t[1],
             t[3] - t[2],t[3] - t[0]); //print for .csv file
@@ -90,7 +90,7 @@ unsigned Microseconds(void) {
     return ts.tv_sec*1000000 + ts.tv_nsec/1000;
 }
 
-void REL_RMS_ERR_init(double REL_RMS_ERR[][],int span_log2_N, int loops){
+void REL_RMS_ERR_init(int span_log2_N, int loops, double REL_RMS_ERR[span_log2_N][]){
     int i, j;
     for(i=0; i<span_log2_N; i++){
         for(j=0; j<loops; j++){
@@ -119,7 +119,7 @@ void input_buffer(fftw_complex* in, int N){
 }
 
 // output REL_RMS_ERR
-void output_RMS(fftw_complex* out, double REL_RMS_ERR[][], int N, int j, int k){
+void output_RMS(fftw_complex* out, int span_log2_N, double REL_RMS_ERR[span_log2_N][], int N, int j, int k){
     int i;
     double tsq[2], a;
     tsq[0]=tsq[1]=0;
