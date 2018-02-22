@@ -9,9 +9,9 @@ Author:Qihao He
 #include <math.h>
 #include <time.h>
 #include <fftw3.h>
+// #include <unistd.h>
 #define REAL 0
 #define IMAG 1
-// #include <unistd.h>
 
 char Usage[] =
     "Usage: hello_fftw3.bin log2_N [log2_M [loops [RMS_C]]]\n"
@@ -27,28 +27,25 @@ unsigned Microseconds(void) {
     return ts.tv_sec*1000000 + ts.tv_nsec/1000;
 }
 
+// input buffer
 void input_buffer(fftw_complex* in, int N){
     int i;
     for (i = 0; i < N; i++) in[i][REAL] = in[i][IMAG] = 0;
     in[1][REAL] = in[N-1][REAL] = 0.5;
 }
 
-void output_RMS(fftw_complex* out, int N){
-    int i,j;
-    double tsq[2];
+// output REL_RMS_ERR
+void output_RMS(fftw_complex* out, int N, int l, int k){
+    int i;
+    double tsq[2], a;
     tsq[0]=tsq[1]=0;
-    for (j=0; j<jobs; j++) {
-
-        out = fft->out + j*fft->step; // output buffer
-
-        freq = j+1;
-        for (i=0; i<N; i++) {
-            double re = cos(2*GPU_FFT_PI*freq*i/N);
-            tsq[0] += pow(re, 2);
-            tsq[1] += pow(re - out[i][REAL], 2) + pow(out[i][IMAG], 2);
-        }
-        REL_RMS_ERR[l][k] = sqrt(tsq[1] / tsq[0]);
+    a = 2 * M_PI / N;
+    for (i=0; i<N; i++) {
+        double re = cos(a * i);
+        tsq[0] += pow(re, 2);
+        tsq[1] += pow(re - out[i][REAL], 2) + pow(out[i][IMAG], 2);
     }
+    REL_RMS_ERR[l][k] = sqrt(tsq[1] / tsq[0]);
 }
 
 int main(int argc, char *argv[]){
@@ -85,28 +82,27 @@ int main(int argc, char *argv[]){
             REL_RMS_ERR[i][j] = 0;
         }
     }
-// print out lables
+// print out lables for .csv file
     printf("log2_N,N,Init_T,FFT_T,RMS_T,Total_T\n");
 
     for(l=0; l<span_log2_N; l++){
-        N = 1<<(log2_N + l); // FFT length
+        N = 1<<(log2_N + l); // initializing FFT length: N
+        in = (fftw_complex*) fftw_malloc(sizeof(fftw_complex) * N);
+        out = (fftw_complex*) fftw_malloc(sizeof(fftw_complex) * N);
+        p = fftw_plan_dft_1d(N, in, out, FFTW_BACKWARD, FFTW_ESTIMATE);
+
         for (k=0; k<loops; k++) {
             t[0] = Microseconds();
-
-            in = (fftw_complex*) fftw_malloc(sizeof(fftw_complex) * N);
-            out = (fftw_complex*) fftw_malloc(sizeof(fftw_complex) * N);
-            p = fftw_plan_dft_1d(N, in, out, FFTW_FORWARD, FFTW_ESTIMATE);
-
             input_buffer(in, N);
 
             t[1] = Microseconds();
             fftw_execute(p); /* repeat as needed */
             t[2] = Microseconds();
 
-            if(RMS_C == 1) output_RMS(out, N);
+            if(RMS_C == 1) output_RMS(out, N, l, k);
             t[3] = Microseconds();
             printf("%i,%i,%d,%d,%d,%d\n",log2_N + l,N,t[1] - t[0],t[2] - t[1],
-            t[3] - t[2],t[3] - t[0]);
+            t[3] - t[2],t[3] - t[0]); //print for .csv file
         }
         fftw_destroy_plan(p);
         fftw_free(in);
