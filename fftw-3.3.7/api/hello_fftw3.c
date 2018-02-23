@@ -161,7 +161,7 @@ void print_RMS(int span_log2_N, int loops, int log2_N, double **REL_RMS_ERR){
     for (i = 0; i < span_log2_N; i++) {
       printf("REL_RMS_ERR for log2_N:%d\n", log2_N + i);
         for (j = 0; j < loops; j++) {
-          printf("%.16f,",REL_RMS_ERR[i][j]);
+          printf("%.10e,",REL_RMS_ERR[i][j]);
         }
         printf("\n");
     }
