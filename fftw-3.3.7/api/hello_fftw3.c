@@ -25,7 +25,7 @@ void REL_RMS_ERR_init(int span_log2_N, int loops, double **REL_RMS_ERR);
 void time_elapsed_init(int span_log2_N, int loops);
 void input_buffer(fftw_complex* in, int N); // input buffer
 void output_RMS(fftw_complex *out, int span_log2_N, double **REL_RMS_ERR, int N, int j, int k);// output REL_RMS_ERR
-void print_RMS(int span_log2_N, int loops, int log2_N); // print out REL_RMS_ERR
+void print_RMS(int span_log2_N, int loops, int log2_N, double **REL_RMS_ERR);// print out REL_RMS_ERR
 /* global array for holding the RMS error */
 // double REL_RMS_ERR[span_log2_N][loops]; //2D array
 
@@ -73,7 +73,7 @@ int main(int argc, char *argv[]){
             fftw_execute(p); /* repeat as needed */
             t[2] = Microseconds();
 
-            if(RMS_C == 1) output_RMS(out,span_log2_N, REL_RMS_ERR, N, l, k);
+            if(RMS_C == 1) output_RMS(out, span_log2_N, REL_RMS_ERR, N, l, k);
             t[3] = Microseconds();
             printf("%i,%i,%d,%d,%d,%d\n",log2_N,N,t[1] - t[0],t[2] - t[1],
             t[3] - t[2],t[3] - t[0]); //print for .csv file
@@ -82,7 +82,7 @@ int main(int argc, char *argv[]){
         fftw_free(in);
         fftw_free(out);
     }
-    if(RMS_C == 1) print_RMS(span_log2_N, loops, log2_N); // print out REL_RMS_ERR
+    if(RMS_C == 1) print_RMS(span_log2_N, loops, log2_N, REL_RMS_ERR); // print out REL_RMS_ERR
     return 0;
 }
 
@@ -134,7 +134,7 @@ void output_RMS(fftw_complex *out, int span_log2_N, double **REL_RMS_ERR, int N,
 }
 
 // print out REL_RMS_ERR
-void print_RMS(int span_log2_N, int loops, int log2_N){
+void print_RMS(int span_log2_N, int loops, int log2_N, double **REL_RMS_ERR){
     int i,j;
     for (i = 0; i < span_log2_N; i++) {
       printf("REL_RMS_ERR for log2_N:%d\n", log2_N + i);
