@@ -37,6 +37,23 @@ void print_RMS(int span_log2_N, int loops, int log2_N, double **REL_RMS_ERR);
 int main(int argc, char *argv[]){
     int i,j,k,l, loops, freq, log2_N, log2_M, N, RMS_C, span_log2_N;
     unsigned t[4];
+    int bruce;
+    double **REL_RMS_ERR;
+    REL_RMS_ERR=(double**)malloc(span_log2_N*sizeof(double *));
+    if(REL_RMS_ERR==NULL)
+    {
+      printf("Malloc failed\n");
+      exit(-1);
+    }
+    for (bruce=0;bruce<span_log2_N;bruce++)
+    {
+          REL_RMS_ERR[bruce]=(double *)malloc(loops*sizeof(double));
+          if(REL_RMS_ERR[bruce]==NULL)
+          {
+             printf("Malloc failed on loop %d",bruce);
+             exit(-1);
+          }
+    }
 
     fftw_complex *in, *out; //in, out buffer
     fftw_plan p; //fftw_plan prepare
