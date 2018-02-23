@@ -20,12 +20,17 @@ char Usage[] =
     "loops  = number of test repeats, loops>0,       default 1\n"
     "RMS_C  = number of test repeats, T(1),F(0),     default 1\n";
 
-unsigned Microseconds(void); // not sure about the time profiling for the RPI function
+// not sure about the time profiling for the RPI function
+unsigned Microseconds(void);
 void REL_RMS_ERR_init(int span_log2_N, int loops, double **REL_RMS_ERR);
 void time_elapsed_init(int span_log2_N, int loops);
 void input_buffer(fftw_complex* in, int N); // input buffer
-void output_RMS(fftw_complex *out, int span_log2_N, double **REL_RMS_ERR, int N, int j, int k);// output REL_RMS_ERR
-void print_RMS(int span_log2_N, int loops, int log2_N, double **REL_RMS_ERR);// print out REL_RMS_ERR
+// output REL_RMS_ERR
+void output_RMS(fftw_complex *out, int span_log2_N, double **REL_RMS_ERR, int N,
+   int j, int k);
+   // print out REL_RMS_ERR
+void print_RMS(int span_log2_N, int loops, int log2_N, double **REL_RMS_ERR);
+
 /* global array for holding the RMS error */
 // double REL_RMS_ERR[span_log2_N][loops]; //2D array
 
@@ -55,8 +60,8 @@ int main(int argc, char *argv[]){
     REL_RMS_ERR_init(span_log2_N, loops, (double **)REL_RMS_ERR);
     time_elapsed_init(span_log2_N, loops);
 // create a pointer to 2D 3D array
-
-    printf("log2_N,N,Init_T,FFT_T,RMS_T,Total_T\n"); // print out lables for .csv file
+// print out lables for .csv file
+    printf("log2_N,N,Init_T,FFT_T,RMS_T,Total_T\n");
 
     for(l=0; l<span_log2_N; l++){
         log2_N = log2_N + l;
@@ -82,7 +87,8 @@ int main(int argc, char *argv[]){
         fftw_free(in);
         fftw_free(out);
     }
-    if(RMS_C == 1) print_RMS(span_log2_N, loops, log2_N, REL_RMS_ERR); // print out REL_RMS_ERR
+    // print out REL_RMS_ERR
+    if(RMS_C == 1) print_RMS(span_log2_N, loops, log2_N, REL_RMS_ERR);
     return 0;
 }
 
@@ -120,7 +126,8 @@ void input_buffer(fftw_complex *in, int N){
 }
 
 // output REL_RMS_ERR
-void output_RMS(fftw_complex *out, int span_log2_N, double **REL_RMS_ERR, int N, int j, int k){
+void output_RMS(fftw_complex *out, int span_log2_N, double **REL_RMS_ERR, int N,
+   int j, int k){
     int i;
     double tsq[2], a;
     tsq[0]=tsq[1]=0;
