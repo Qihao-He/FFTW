@@ -35,7 +35,8 @@ void print_RMS(int span_log2_N, int loops, int log2_N, double **REL_RMS_ERR);
 // double REL_RMS_ERR[span_log2_N][loops]; //2D array
 
 int main(int argc, char *argv[]){
-    int i,j,k,l, loops, freq, log2_N, log2_M, log2_P, N, RMS_C, span_log2_N;
+    int i, j, k, l, loops, freq, log2_N, log2_M, log2_P, N, RMS_C, span_log2_N;
+    double **REL_RMS_ERR;
     unsigned t[4];
 
     fftw_complex *in, *out; //in, out buffer
@@ -53,20 +54,18 @@ int main(int argc, char *argv[]){
     }
 
     span_log2_N = log2_M - log2_N;
-    int bruce;
-    double **REL_RMS_ERR;
     REL_RMS_ERR=(double**)malloc(span_log2_N*sizeof(double *));
     if(REL_RMS_ERR==NULL)
     {
       printf("Malloc failed\n");
       exit(-1);
     }
-    for (bruce=0;bruce<span_log2_N;bruce++)
+    for (i=0;i<span_log2_N;i++)
     {
-          REL_RMS_ERR[bruce]=(double *)malloc(loops*sizeof(double));
-          if(REL_RMS_ERR[bruce]==NULL)
+          REL_RMS_ERR[i]=(double *)malloc(loops*sizeof(double));
+          if(REL_RMS_ERR[i]==NULL)
           {
-             printf("Malloc failed on loop %d",bruce);
+             printf("Malloc failed on loop %d",i);
              exit(-1);
           }
     }
@@ -74,7 +73,6 @@ int main(int argc, char *argv[]){
 // initializing 2D, 3D array to 0
     REL_RMS_ERR_init(span_log2_N, loops, (double **)REL_RMS_ERR);
     time_elapsed_init(span_log2_N, loops);
-// create a pointer to 2D 3D array
 // print out lables for .csv file
     printf("log2_N,N,Init_T,FFT_T,RMS_T,Total_T\n");
 
