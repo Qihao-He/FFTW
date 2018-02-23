@@ -80,8 +80,8 @@ int main(int argc, char *argv[]){
     printf("log2_N,N,Init_T,FFT_T,RMS_T,Total_T\n");
 
     for(l=0; l<span_log2_N; l++){
-        log2_N = log2_N + l;
-        N = 1<<log2_N; // initializing FFT length: N
+        log2_P = log2_N + l;
+        N = 1<<log2_P; // initializing FFT length: N
         in = (fftw_complex *)fftw_malloc(sizeof(fftw_complex) * N);
         out = (fftw_complex *)fftw_malloc(sizeof(fftw_complex) * N);
         p = fftw_plan_dft_1d(N, in, out, FFTW_BACKWARD, FFTW_ESTIMATE);
@@ -96,7 +96,7 @@ int main(int argc, char *argv[]){
 
             if(RMS_C == 1) output_RMS(out, span_log2_N, REL_RMS_ERR, N, l, k);
             t[3] = Microseconds();
-            printf("%i,%i,%d,%d,%d,%d\n",log2_N,N,t[1] - t[0],t[2] - t[1],
+            printf("%i,%i,%d,%d,%d,%d\n",log2_P,N,t[1] - t[0],t[2] - t[1],
             t[3] - t[2],t[3] - t[0]); //print for .csv file
         }
         fftw_destroy_plan(p);
