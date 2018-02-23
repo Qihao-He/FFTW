@@ -20,19 +20,13 @@ char Usage[] =
     "loops  = number of test repeats, loops>0,       default 1\n"
     "RMS_C  = number of test repeats, T(1),F(0),     default 1\n";
 
-// not sure about the time profiling for the RPI function
 unsigned Microseconds(void);
 void REL_RMS_ERR_init(int span_log2_N, int loops, double **REL_RMS_ERR);
 void time_elapsed_init(int span_log2_N, int loops);
-void input_buffer(fftw_complex* in, int N); // input buffer
-// output REL_RMS_ERR
+void input_buffer(fftw_complex* in, int N);
 void output_RMS(fftw_complex *out, int span_log2_N, double **REL_RMS_ERR, int N,
    int j, int k);
-   // print out REL_RMS_ERR
 void print_RMS(int span_log2_N, int loops, int log2_N, double **REL_RMS_ERR);
-
-/* global array for holding the RMS error */
-// double REL_RMS_ERR[span_log2_N][loops]; //2D array
 
 int main(int argc, char *argv[]){
     int i, j, k, l, loops, freq, log2_N, log2_M, log2_P, N, RMS_C, span_log2_N;
