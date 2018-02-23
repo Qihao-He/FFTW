@@ -24,8 +24,8 @@ unsigned Microseconds(void); // not sure about the time profiling for the RPI fu
 void REL_RMS_ERR_init(int span_log2_N, int loops, double **REL_RMS_ERR);
 void time_elapsed_init(int span_log2_N, int loops);
 void input_buffer(fftw_complex* in, int N); // input buffer
-void output_RMS(fftw_complex* out, int N, int j, int k); // output REL_RMS_ERR
-void print_RMS(int span_log2_N, int loops); // print out REL_RMS_ERR
+void output_RMS(fftw_complex *out, int span_log2_N, double **REL_RMS_ERR, int N, int j, int k);// output REL_RMS_ERR
+void print_RMS(int span_log2_N, int loops, int log2_N); // print out REL_RMS_ERR
 /* global array for holding the RMS error */
 // double REL_RMS_ERR[span_log2_N][loops]; //2D array
 
@@ -82,7 +82,7 @@ int main(int argc, char *argv[]){
         fftw_free(in);
         fftw_free(out);
     }
-    if(RMS_C == 1) print_RMS(span_log2_N, loops); // print out REL_RMS_ERR
+    if(RMS_C == 1) print_RMS(span_log2_N, loops, log2_N); // print out REL_RMS_ERR
     return 0;
 }
 
@@ -134,7 +134,7 @@ void output_RMS(fftw_complex *out, int span_log2_N, double **REL_RMS_ERR, int N,
 }
 
 // print out REL_RMS_ERR
-void print_RMS(int span_log2_N, int loops){
+void print_RMS(int span_log2_N, int loops, int log2_N){
     int i,j;
     for (i = 0; i < span_log2_N; i++) {
       printf("REL_RMS_ERR for log2_N:%d\n", log2_N + i);
