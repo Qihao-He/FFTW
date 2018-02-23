@@ -55,19 +55,17 @@ int main(int argc, char *argv[]){
 
     span_log2_N = log2_M - log2_N;
     REL_RMS_ERR=(double**)malloc(span_log2_N*sizeof(double *));
-    if(REL_RMS_ERR==NULL)
-    {
-      printf("Malloc failed\n");
-      exit(-1);
+    if(REL_RMS_ERR==NULL){
+        printf("Malloc failed\n");
+        exit(-1);
     }
-    for (i=0;i<span_log2_N;i++)
-    {
-          REL_RMS_ERR[i]=(double *)malloc(loops*sizeof(double));
-          if(REL_RMS_ERR[i]==NULL)
-          {
-             printf("Malloc failed on loop %d",i);
-             exit(-1);
-          }
+    for (i=0;i<span_log2_N;i++){
+        REL_RMS_ERR[i]=(double *)malloc(loops*sizeof(double));
+        if(REL_RMS_ERR[i]==NULL)
+        {
+           printf("Malloc failed on loop %d",i);
+           exit(-1);
+        }
     }
 
 // initializing 2D, 3D array to 0
