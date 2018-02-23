@@ -41,19 +41,19 @@ int main(int argc, char *argv[]){
     loops  = argc>3? atoi(argv[3]) : 1;  // test repetitions
     RMS_C  = argc>4? atoi(argv[4]) : 1;  // RMS_controller
 
-    if (!(argc>=2 && argc<=5) || loops<1 || !(RMS_C>=0 && RMS_C<=1) ||
-    log2_N>=log2_M) {
+    if (!(argc >= 2 && argc <= 5) || loops < 1 || !(RMS_C >= 0 && RMS_C <= 1) ||
+    log2_N >= log2_M) {
         printf(Usage);
         return -1;
     }
 
     span_log2_N = log2_M - log2_N;
-    REL_RMS_ERR=(double**)malloc(span_log2_N*sizeof(double *));
+    REL_RMS_ERR = (double**)malloc(span_log2_N*sizeof(double *));
     if(REL_RMS_ERR==NULL){
         printf("Malloc failed\n");
         exit(-1);
     }
-    for (i=0;i<span_log2_N;i++){
+    for (i = 0; i < span_log2_N; i++){
         REL_RMS_ERR[i]=(double *)malloc(loops*sizeof(double));
         if(REL_RMS_ERR[i]==NULL)
         {
@@ -68,14 +68,14 @@ int main(int argc, char *argv[]){
 // print out lables for .csv file
     printf("log2_N,N,Init_T,FFT_T,RMS_T,Total_T\n");
 
-    for(l=0; l<span_log2_N; l++){
+    for(l = 0; l < span_log2_N; l++){
         log2_P = log2_N + l;
         N = 1<<log2_P; // initializing FFT length: N
         in = (fftw_complex *)fftw_malloc(sizeof(fftw_complex) * N);
         out = (fftw_complex *)fftw_malloc(sizeof(fftw_complex) * N);
         p = fftw_plan_dft_1d(N, in, out, FFTW_BACKWARD, FFTW_ESTIMATE);
 
-        for (k=0; k<loops; k++) {
+        for (k = 0; k < loops; k++) {
             t[0] = Microseconds();
             input_buffer(in, N);
 
@@ -100,13 +100,13 @@ int main(int argc, char *argv[]){
 unsigned Microseconds(void) {
     struct timespec ts;
     clock_gettime(CLOCK_REALTIME, &ts);
-    return ts.tv_sec*1000000 + ts.tv_nsec/1000;
+    return ts.tv_sec * 1000000 + ts.tv_nsec / 1000;
 }
 
 void REL_RMS_ERR_init(int span_log2_N, int loops, double **REL_RMS_ERR){
     int i, j;
-    for(i=0; i<span_log2_N; i++){
-        for(j=0; j<loops; j++){
+    for(i = 0; i < span_log2_N; i++){
+        for(j = 0; j < loops; j++){
             REL_RMS_ERR[i][j] = 0;
         }
     }
@@ -115,9 +115,9 @@ void REL_RMS_ERR_init(int span_log2_N, int loops, double **REL_RMS_ERR){
 void time_elapsed_init(int span_log2_N, int loops){
     int i,j,k;
     double time_elapsed[span_log2_N][loops][4]; //3D array
-    for(i=0; i<span_log2_N; i++){
-        for(j=0; j<loops; j++){
-            for(k=0; k<4; k++){
+    for(i = 0; i < span_log2_N; i++){
+        for(j = 0; j < loops; j++){
+            for(k = 0; k < 4; k++){
                 time_elapsed[i][j][k] = 0;
             }
         }
@@ -127,7 +127,7 @@ void time_elapsed_init(int span_log2_N, int loops){
 void input_buffer(fftw_complex *in, int N){
     int i;
     for (i = 0; i < N; i++) in[i][REAL] = in[i][IMAG] = 0;
-    in[1][REAL] = in[N-1][REAL] = 0.5;
+    in[1][REAL] = in[N - 1][REAL] = 0.5;
 }
 
 // output REL_RMS_ERR
@@ -137,7 +137,7 @@ void output_RMS(fftw_complex *out, int span_log2_N, double **REL_RMS_ERR, int N,
     double tsq[2], a;
     tsq[0]=tsq[1]=0;
     a = 2 * M_PI / N;
-    for (i=0; i<N; i++) {
+    for (i = 0; i < N; i++) {
         double re = cos(a * i);
         tsq[0] += pow(re, 2);
         tsq[1] += pow(re - out[i][REAL], 2) + pow(out[i][IMAG], 2);
@@ -151,7 +151,7 @@ void print_RMS(int span_log2_N, int loops, int log2_N, double **REL_RMS_ERR){
     for (i = 0; i < span_log2_N; i++) {
       printf("REL_RMS_ERR for log2_N:%d\n", log2_N + i);
         for (j = 0; j < loops; j++) {
-          printf("%.10e,",REL_RMS_ERR[i][j]);
+          printf("%.10e,", REL_RMS_ERR[i][j]);
         }
         printf("\n");
     }
