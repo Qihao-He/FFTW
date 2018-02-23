@@ -71,7 +71,6 @@ int main(int argc, char *argv[]){
 
     span_log2_N = log2_M - log2_N;
 
-
 // initializing 2D, 3D array to 0
     REL_RMS_ERR_init(span_log2_N, loops, (double **)REL_RMS_ERR);
     time_elapsed_init(span_log2_N, loops);
