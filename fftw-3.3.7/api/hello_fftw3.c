@@ -35,7 +35,7 @@ void print_RMS(int span_log2_N, int loops, int log2_N, double **REL_RMS_ERR);
 // double REL_RMS_ERR[span_log2_N][loops]; //2D array
 
 int main(int argc, char *argv[]){
-    int i,j,k,l, loops, freq, log2_N, log2_M, N, RMS_C, span_log2_N;
+    int i,j,k,l, loops, freq, log2_N, log2_M, log2_P, N, RMS_C, span_log2_N;
     unsigned t[4];
     int bruce;
     double **REL_RMS_ERR;
