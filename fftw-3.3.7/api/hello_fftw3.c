@@ -37,6 +37,22 @@ void print_RMS(int span_log2_N, int loops, int log2_N, double **REL_RMS_ERR);
 int main(int argc, char *argv[]){
     int i,j,k,l, loops, freq, log2_N, log2_M, log2_P, N, RMS_C, span_log2_N;
     unsigned t[4];
+    
+    fftw_complex *in, *out; //in, out buffer
+    fftw_plan p; //fftw_plan prepare
+
+    log2_N = argc>1? atoi(argv[1]) : 12; // 8 <= log2_N <= 22
+    log2_M = argc>2? atoi(argv[2]) : log2_N + 1; // 8 <= log2_N <= 22
+    loops  = argc>3? atoi(argv[3]) : 1;  // test repetitions
+    RMS_C  = argc>4? atoi(argv[4]) : 1;  // RMS_controller
+
+    if (!(argc>=2 && argc<=5) || loops<1 || !(RMS_C>=0 && RMS_C<=1) ||
+    log2_N>=log2_M) {
+        printf(Usage);
+        return -1;
+    }
+
+    span_log2_N = log2_M - log2_N;
     int bruce;
     double **REL_RMS_ERR;
     REL_RMS_ERR=(double**)malloc(span_log2_N*sizeof(double *));
@@ -54,22 +70,6 @@ int main(int argc, char *argv[]){
              exit(-1);
           }
     }
-
-    fftw_complex *in, *out; //in, out buffer
-    fftw_plan p; //fftw_plan prepare
-
-    log2_N = argc>1? atoi(argv[1]) : 12; // 8 <= log2_N <= 22
-    log2_M = argc>2? atoi(argv[2]) : log2_N + 1; // 8 <= log2_N <= 22
-    loops  = argc>3? atoi(argv[3]) : 1;  // test repetitions
-    RMS_C  = argc>4? atoi(argv[4]) : 1;  // RMS_controller
-
-    if (!(argc>=2 && argc<=5) || loops<1 || !(RMS_C>=0 && RMS_C<=1) ||
-    log2_N>=log2_M) {
-        printf(Usage);
-        return -1;
-    }
-
-    span_log2_N = log2_M - log2_N;
 
 // initializing 2D, 3D array to 0
     REL_RMS_ERR_init(span_log2_N, loops, (double **)REL_RMS_ERR);
