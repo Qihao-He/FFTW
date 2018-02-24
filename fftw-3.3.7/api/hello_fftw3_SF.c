@@ -23,8 +23,8 @@ char Usage[] =
 unsigned Microseconds(void);
 void REL_RMS_ERR_init(int span_log2_N, int loops, double **REL_RMS_ERR);
 void time_elapsed_init(int span_log2_N, int loops);
-void input_buffer(fftw_complex* in, int N);
-void output_RMS(fftw_complex *out, int span_log2_N, double **REL_RMS_ERR, int N,
+void input_buffer(fftwf_complex* in, int N);
+void output_RMS(fftwf_complex *out, int span_log2_N, double **REL_RMS_ERR, int N,
    int j, int k);
 void print_RMS(int span_log2_N, int loops, int log2_N, double **REL_RMS_ERR);
 
@@ -33,8 +33,8 @@ int main(int argc, char *argv[]){
     double **REL_RMS_ERR;
     unsigned t[4];
 
-    fftw_complex *in, *out; //in, out buffer
-    fftw_plan p; //fftw_plan prepare
+    fftwf_complex *in, *out; //in, out buffer
+    fftwf_plan p; //fftwf_plan prepare
 
     log2_N = argc>1? atoi(argv[1]) : 12; // 8 <= log2_N <= 22
     log2_M = argc>2? atoi(argv[2]) : log2_N + 1; // 8 <= log2_N <= 22
@@ -71,16 +71,16 @@ int main(int argc, char *argv[]){
     for(l = 0; l < span_log2_N; l++){
         log2_P = log2_N + l;
         N = 1<<log2_P; // initializing FFT length: N
-        in = (fftw_complex *)fftw_malloc(sizeof(fftw_complex) * N);
-        out = (fftw_complex *)fftw_malloc(sizeof(fftw_complex) * N);
-        p = fftw_plan_dft_1d(N, in, out, FFTW_BACKWARD, FFTW_ESTIMATE);
+        in = (fftwf_complex *)fftwf_malloc(sizeof(fftwf_complex) * N);
+        out = (fftwf_complex *)fftwf_malloc(sizeof(fftwf_complex) * N);
+        p = fftwf_plan_dft_1d(N, in, out, FFTW_BACKWARD, FFTW_ESTIMATE);
 
         for (k = 0; k < loops; k++) {
             t[0] = Microseconds();
             input_buffer(in, N);
 
             t[1] = Microseconds();
-            fftw_execute(p); /* repeat as needed */
+            fftwf_execute(p); /* repeat as needed */
             t[2] = Microseconds();
 
             if(RMS_C == 1) output_RMS(out, span_log2_N, REL_RMS_ERR, N, l, k);
@@ -88,9 +88,9 @@ int main(int argc, char *argv[]){
             printf("%i,%i,%d,%d,%d,%d\n",log2_P,N,t[1] - t[0],t[2] - t[1],
             t[3] - t[2],t[3] - t[0]); //print for .csv file
         }
-        fftw_destroy_plan(p);
-        fftw_free(in);
-        fftw_free(out);
+        fftwf_destroy_plan(p);
+        fftwf_free(in);
+        fftwf_free(out);
     }
     // print out REL_RMS_ERR
     if(RMS_C == 1) print_RMS(span_log2_N, loops, log2_N, REL_RMS_ERR);
@@ -124,14 +124,14 @@ void time_elapsed_init(int span_log2_N, int loops){
     }
 }
 // input buffer
-void input_buffer(fftw_complex *in, int N){
+void input_buffer(fftwf_complex *in, int N){
     int i;
     for (i = 0; i < N; i++) in[i][REAL] = in[i][IMAG] = 0;
     in[1][REAL] = in[N - 1][REAL] = 0.5;
 }
 
 // output REL_RMS_ERR
-void output_RMS(fftw_complex *out, int span_log2_N, double **REL_RMS_ERR, int N,
+void output_RMS(fftwf_complex *out, int span_log2_N, double **REL_RMS_ERR, int N,
    int j, int k){
     int i;
     double tsq[2], a;
