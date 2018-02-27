@@ -22,7 +22,7 @@ char Usage[] =
     "RMS_C  = RMS_controller, T(1),F(0),     default 0\n";
     // "BMP_C  = BMP_controller, T(1),F(0),       default 0\n";
 
-fftwf_complex *in, *out; //allocate arrays of in, out buffer
+fftwf_complex **in, **out; //allocate arrays of in, out buffer
 fftwf_plan p; //fftwf_plan prepare
 
 unsigned Microseconds(void);
