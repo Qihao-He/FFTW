@@ -77,9 +77,9 @@ int main(int argc, char *argv[]){
         N = 1 << log2_P; // initializing FFT length: N
         // in = (fftwf_complex *)fftwf_malloc(sizeof(fftwf_complex) * (N * N));
         // out = (fftwf_complex *)fftwf_malloc(sizeof(fftwf_complex) * (N * N));
-        in = (fftwf_complex **)fftwf_malloc(sizeof(fftwf_complex) * (N * N));
+        in = (fftwf_complex **)fftwf_malloc(sizeof(fftwf_complex *) * N);
         allocate_io(N, in);
-        out = (fftwf_complex **)fftwf_malloc(sizeof(fftwf_complex) * (N * N));
+        out = (fftwf_complex **)fftwf_malloc(sizeof(fftwf_complex *) * N);
         allocate_io(N, out);
 
         // p = fftwf_plan_dft_1d(N, in, out, FFTW_BACKWARD, FFTW_ESTIMATE);
