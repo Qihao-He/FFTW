@@ -46,7 +46,7 @@ int main(int argc, char *argv[]){
     // BMP_C  = argc>5? atoi(argv[5]) : 0;  // BMP_controller
 
     if (!(argc >= 2 && argc <= 6) || loops < 1 || !(RMS_C >= 0 && RMS_C <= 1)
-    || !(log2_N >= 8 && log2_N <= 11 && log2_M <= 12){
+    || !(log2_N >= 8 && log2_N <= 11 && log2_M <= 12)){
     //|| !(BMP_C >= 0 && BMP_C <= 1)) {
         printf(Usage);
         return -1;
