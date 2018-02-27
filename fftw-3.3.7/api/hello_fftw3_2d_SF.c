@@ -19,8 +19,8 @@ char Usage[] =
     "log2_N = log2(FFT_length),       log2_N = 8...22\n"
     "log2_M = log2(FFT_length),       log2_M > log2_N\n"
     "loops  = number of test repeats, loops>0,       default 1\n"
-    "RMS_C  = RMS_controller, T(1),F(0),     default 0\n"
-    "BMP_C  = BMP_controller, T(1),F(0),       default 0\n";
+    "RMS_C  = RMS_controller, T(1),F(0),     default 0\n";
+    // "BMP_C  = BMP_controller, T(1),F(0),       default 0\n";
 
 fftwf_complex *in, *out; //allocate arrays of in, out buffer
 fftwf_plan p; //fftwf_plan prepare
@@ -43,7 +43,7 @@ int main(int argc, char *argv[]){
     log2_M = argc>2? atoi(argv[2]) : log2_N + 1; // 8 <= log2_N <= 22
     loops  = argc>3? atoi(argv[3]) : 1;  // test repetitions
     RMS_C  = argc>4? atoi(argv[4]) : 0;  // RMS_controller
-    BMP_C  = argc>5? atoi(argv[5]) : 0;  // BMP_controller
+    // BMP_C  = argc>5? atoi(argv[5]) : 0;  // BMP_controller
 
     if (!(argc >= 2 && argc <= 6) || loops < 1 || !(RMS_C >= 0 && RMS_C <= 1) ||
     !(log2_N >= 8 && log2_N <= 11 && log2_M <= 12) ||
