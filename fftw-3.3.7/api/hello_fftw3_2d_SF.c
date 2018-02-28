@@ -22,13 +22,13 @@ char Usage[] =
     "RMS_C  = RMS_controller, T(1),F(0),     default 0\n";
     // "BMP_C  = BMP_controller, T(1),F(0),       default 0\n";
 
-fftwf_complex **in, **out; //allocate arrays of in, out buffer
+fftwf_complex *in, *out; //allocate arrays of in, out buffer
 fftwf_plan p; //fftwf_plan prepare
 
 unsigned Microseconds(void);
 void REL_RMS_ERR_init(int span_log2_N, int loops, double **REL_RMS_ERR);
 // void time_elapsed_init(int span_log2_N, int loops);
-void allocate_io(int N, fftwf_complex **in);
+void allocate_io(int N, fftwf_complex *in);
 void input_buffer(fftwf_complex* in, int N);
 void output_RMS(fftwf_complex *out, int span_log2_N, double **REL_RMS_ERR, int N,
    int j, int k);
@@ -77,9 +77,9 @@ int main(int argc, char *argv[]){
         N = 1 << log2_P; // initializing FFT length: N
         // in = (fftwf_complex *)fftwf_malloc(sizeof(fftwf_complex) * (N * N));
         // out = (fftwf_complex *)fftwf_malloc(sizeof(fftwf_complex) * (N * N));
-        in = (fftwf_complex **)fftwf_malloc(sizeof(fftwf_complex *) * N);
+        // in = (fftwf_complex *)fftwf_malloc(sizeof(fftwf_complex *) * N);
         allocate_io(N, in);
-        out = (fftwf_complex **)fftwf_malloc(sizeof(fftwf_complex *) * N);
+        // out = (fftwf_complex *)fftwf_malloc(sizeof(fftwf_complex *) * N);
         allocate_io(N, out);
 
         // p = fftwf_plan_dft_1d(N, in, out, FFTW_BACKWARD, FFTW_ESTIMATE);
@@ -124,7 +124,8 @@ void REL_RMS_ERR_init(int span_log2_N, int loops, double **REL_RMS_ERR){
         }
     }
 }
-void allocate_io(int N, fftwf_complex **in){
+void allocate_io(int N, fftwf_complex *in){
+    in = (fftwf_complex *)fftwf_malloc(N * N * sizeof(fftwf_complex));
     int i;
     if(in == NULL){
         printf("Malloc failed\n");
