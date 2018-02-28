@@ -28,14 +28,14 @@ fftwf_plan p; //fftwf_plan prepare
 unsigned Microseconds(void);
 void REL_RMS_ERR_init(int span_log2_N, int loops, double **REL_RMS_ERR);
 // void time_elapsed_init(int span_log2_N, int loops);
-void allocate_io(int N, fftwf_complex *in);
 void input_buffer(fftwf_complex* in, int N);
 void output_RMS(fftwf_complex *out, int span_log2_N, double **REL_RMS_ERR, int N,
    int j, int k);
 void print_RMS(int span_log2_N, int loops, int log2_N, double **REL_RMS_ERR);
 
 int main(int argc, char *argv[]){
-    int i, j, k, l, loops, freq, log2_N, log2_M, log2_P, N, RMS_C, span_log2_N;
+    int i, j, k, l, loops, freq, log2_N, log2_M, log2_P, N, RMS_C, span_log2_N,
+    sizeofblock;
     double **REL_RMS_ERR;
     unsigned t[4];
 
@@ -75,12 +75,9 @@ int main(int argc, char *argv[]){
     for(l = 0; l < span_log2_N; l++){
         log2_P = log2_N + l;
         N = 1 << log2_P; // initializing FFT length: N
-        // in = (fftwf_complex *)fftwf_malloc(sizeof(fftwf_complex) * (N * N));
-        // out = (fftwf_complex *)fftwf_malloc(sizeof(fftwf_complex) * (N * N));
-        // in = (fftwf_complex *)fftwf_malloc(sizeof(fftwf_complex *) * N);
-        allocate_io(N, in);
-        // out = (fftwf_complex *)fftwf_malloc(sizeof(fftwf_complex *) * N);
-        allocate_io(N, out);
+        sizeofblock = N * N;
+        in = (fftwf_complex *) fftwf_malloc(sizeofblock * sizeof(fftwf_complex));
+        out = (fftwf_complex *) fftwf_malloc(sizeofblock * sizeof(fftwf_complex));
 
         // p = fftwf_plan_dft_1d(N, in, out, FFTW_BACKWARD, FFTW_ESTIMATE);
 
@@ -90,13 +87,14 @@ int main(int argc, char *argv[]){
 
         for (k = 0; k < loops; k++) {
             t[0] = Microseconds();
-            input_buffer(in, N);
+            input_buffer(in, sizeofblock);
 
             t[1] = Microseconds();
             fftwf_execute(p); /* repeat as needed */
             t[2] = Microseconds();
 
-            if(RMS_C == 1) output_RMS(out, span_log2_N, REL_RMS_ERR, N, l, k);
+            if(RMS_C == 1) output_RMS(out, span_log2_N, REL_RMS_ERR,
+              sizeofblock, l, k);
             t[3] = Microseconds();
             printf("%i,%i,%d,%d,%d,%d\n",log2_P,N,t[1] - t[0],t[2] - t[1],
             t[3] - t[2],t[3] - t[0]); //print for .csv file
@@ -124,42 +122,21 @@ void REL_RMS_ERR_init(int span_log2_N, int loops, double **REL_RMS_ERR){
         }
     }
 }
-void allocate_io(int N, fftwf_complex *in){
-    in = (fftwf_complex *)fftwf_malloc(N * N * sizeof(fftwf_complex));
-    int i;
-    if(in == NULL){
-        printf("Malloc failed\n");
-        exit(-1);
-    }
-    for (i = 0; i < N; i++){
-        in[i] = (fftwf_complex *)fftwf_malloc(N * sizeof(fftwf_complex));
-        if(in[i] == NULL){
-           printf("Malloc failed on loops %d",i);
-           exit(-1);
-        }
-    }
-}
 // input buffer
-void input_buffer(fftwf_complex *in, int N){
-    int i, j;
-    for (j = 0; j < N; j++){
-        for (i = 0; i < N; i++){
-            in[j][i][REAL] = in[j][i][IMAG] = 0;
-        }
-    }
-    in[0][0][REAL] = 1;
+void input_buffer(fftwf_complex *in, int sizeofblock){
+    int i;
+    for (i = 0; i < sizeofblock; i++) in[i][REAL] = in[i][IMAG] = 0;
+    in[0][REAL] = 1;
 }
 // output REL_RMS_ERR
-void output_RMS(fftwf_complex *out, int span_log2_N, double **REL_RMS_ERR, int N,
-   int j, int k){
+void output_RMS(fftwf_complex *out, int span_log2_N, double **REL_RMS_ERR,
+  int sizeofblock, int j, int k){
     int i;
     double tsq[2], a;
     tsq[0] = tsq[1] = 0;
-    a = 2 * M_PI / N;
-    for (i = 0; i < N; i++) {
-        double re = cos(a * i);
-        tsq[0] += pow(re, 2);
-        tsq[1] += pow(re - out[i][REAL], 2) + pow(out[i][IMAG], 2);
+    tsq[0] = sizeofblock;
+    for (i = 0; i < sizeofblock; i++){
+        tsq[1] += pow(1 - out[i][REAL], 2) + pow(out[i][IMAG], 2);
     }
     REL_RMS_ERR[j][k] = sqrt(tsq[1] / tsq[0]);
 }
