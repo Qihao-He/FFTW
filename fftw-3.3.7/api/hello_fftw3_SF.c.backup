@@ -22,7 +22,7 @@ char Usage[] =
 
 unsigned Microseconds(void);
 void REL_RMS_ERR_init(int span_log2_N, int loops, double **REL_RMS_ERR);
-void time_elapsed_init(int span_log2_N, int loops);
+// void time_elapsed_init(int span_log2_N, int loops);
 void input_buffer(fftwf_complex* in, int N);
 void output_RMS(fftwf_complex *out, int span_log2_N, double **REL_RMS_ERR, int N,
    int j, int k);
@@ -64,9 +64,9 @@ int main(int argc, char *argv[]){
 
 // initializing 2D, 3D array to 0
     REL_RMS_ERR_init(span_log2_N, loops, (double **)REL_RMS_ERR);
-    time_elapsed_init(span_log2_N, loops);
+    // time_elapsed_init(span_log2_N, loops);
 // print out lables for .csv file
-    printf("log2_N,N,Init_T,FFT_T,RMS_T,Total_T\n");
+    printf("log2_N,Init_T,FFT_T,RMS_T,Total_T\n");
 
     for(l = 0; l < span_log2_N; l++){
         log2_P = log2_N + l;
@@ -85,7 +85,7 @@ int main(int argc, char *argv[]){
 
             if(RMS_C == 1) output_RMS(out, span_log2_N, REL_RMS_ERR, N, l, k);
             t[3] = Microseconds();
-            printf("%i,%i,%d,%d,%d,%d\n",log2_P,N,t[1] - t[0],t[2] - t[1],
+            printf("%i,%d,%d,%d,%d\n",log2_P,t[1] - t[0],t[2] - t[1],
             t[3] - t[2],t[3] - t[0]); //print for .csv file
         }
         fftwf_destroy_plan(p);
@@ -108,18 +108,6 @@ void REL_RMS_ERR_init(int span_log2_N, int loops, double **REL_RMS_ERR){
     for(i = 0; i < span_log2_N; i++){
         for(j = 0; j < loops; j++){
             REL_RMS_ERR[i][j] = 0;
-        }
-    }
-}
-
-void time_elapsed_init(int span_log2_N, int loops){
-    int i,j,k;
-    double time_elapsed[span_log2_N][loops][4]; //3D array
-    for(i = 0; i < span_log2_N; i++){
-        for(j = 0; j < loops; j++){
-            for(k = 0; k < 4; k++){
-                time_elapsed[i][j][k] = 0;
-            }
         }
     }
 }
@@ -157,3 +145,14 @@ void print_RMS(int span_log2_N, int loops, int log2_N, double **REL_RMS_ERR){
     }
     printf("\n");
 }
+// void time_elapsed_init(int span_log2_N, int loops){
+//     int i,j,k;
+//     double time_elapsed[span_log2_N][loops][4]; //3D array
+//     for(i = 0; i < span_log2_N; i++){
+//         for(j = 0; j < loops; j++){
+//             for(k = 0; k < 4; k++){
+//                 time_elapsed[i][j][k] = 0;
+//             }
+//         }
+//     }
+// }
