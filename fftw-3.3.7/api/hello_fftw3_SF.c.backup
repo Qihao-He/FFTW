@@ -22,10 +22,9 @@ char Usage[] =
 
 unsigned Microseconds(void);
 void REL_RMS_ERR_init(int span_log2_N, int loops, double **REL_RMS_ERR);
-// void time_elapsed_init(int span_log2_N, int loops);
 void input_buffer(fftwf_complex* in, int N);
-void output_RMS(fftwf_complex *out, int span_log2_N, double **REL_RMS_ERR, int N,
-   int j, int k);
+void output_RMS(fftwf_complex *out, int span_log2_N, double **REL_RMS_ERR,
+  int N, int j, int k);
 void print_RMS(int span_log2_N, int loops, int log2_N, double **REL_RMS_ERR);
 
 int main(int argc, char *argv[]){
@@ -41,8 +40,8 @@ int main(int argc, char *argv[]){
     loops  = argc>3? atoi(argv[3]) : 1;  // test repetitions
     RMS_C  = argc>4? atoi(argv[4]) : 1;  // RMS_controller
 
-    if (!(argc >= 2 && argc <= 5) || loops < 1 || !(RMS_C >= 0 && RMS_C <= 1) ||
-    log2_N >= log2_M) {
+    if (!(argc >= 2 && argc <= 5) || loops < 1 || !(RMS_C >= 0 && RMS_C <= 1)
+    || log2_N >= log2_M) {
         printf(Usage);
         return -1;
     }
@@ -62,10 +61,9 @@ int main(int argc, char *argv[]){
         }
     }
 
-// initializing 2D, 3D array to 0
+    // initializing 2D, 3D array to 0
     REL_RMS_ERR_init(span_log2_N, loops, (double **)REL_RMS_ERR);
-    // time_elapsed_init(span_log2_N, loops);
-// print out lables for .csv file
+    // print out lables for .csv file
     printf("log2_N,Init_T,FFT_T,RMS_T,Total_T\n");
 
     for(l = 0; l < span_log2_N; l++){
@@ -117,10 +115,9 @@ void input_buffer(fftwf_complex *in, int N){
     for (i = 0; i < N; i++) in[i][REAL] = in[i][IMAG] = 0;
     in[1][REAL] = in[N - 1][REAL] = 0.5;
 }
-
 // output REL_RMS_ERR
-void output_RMS(fftwf_complex *out, int span_log2_N, double **REL_RMS_ERR, int N,
-   int j, int k){
+void output_RMS(fftwf_complex *out, int span_log2_N, double **REL_RMS_ERR,
+  int N, int j, int k){
     int i;
     double tsq[2], a;
     tsq[0]=tsq[1]=0;
@@ -132,7 +129,6 @@ void output_RMS(fftwf_complex *out, int span_log2_N, double **REL_RMS_ERR, int N
     }
     REL_RMS_ERR[j][k] = sqrt(tsq[1] / tsq[0]);
 }
-
 // print out REL_RMS_ERR
 void print_RMS(int span_log2_N, int loops, int log2_N, double **REL_RMS_ERR){
     int i,j;
@@ -145,14 +141,3 @@ void print_RMS(int span_log2_N, int loops, int log2_N, double **REL_RMS_ERR){
     }
     printf("\n");
 }
-// void time_elapsed_init(int span_log2_N, int loops){
-//     int i,j,k;
-//     double time_elapsed[span_log2_N][loops][4]; //3D array
-//     for(i = 0; i < span_log2_N; i++){
-//         for(j = 0; j < loops; j++){
-//             for(k = 0; k < 4; k++){
-//                 time_elapsed[i][j][k] = 0;
-//             }
-//         }
-//     }
-// }

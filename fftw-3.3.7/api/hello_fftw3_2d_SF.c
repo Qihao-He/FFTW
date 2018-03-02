@@ -20,17 +20,15 @@ char Usage[] =
     "log2_M = log2(FFT_length),       log2_M > log2_N\n"
     "loops  = number of test repeats, loops>0,       default 1\n"
     "RMS_C  = RMS_controller, T(1),F(0),     default 0\n";
-    // "BMP_C  = BMP_controller, T(1),F(0),       default 0\n";
 
 fftwf_complex *in, *out; //allocate arrays of in, out buffer
 fftwf_plan p; //fftwf_plan prepare
 
 unsigned Microseconds(void);
 void REL_RMS_ERR_init(int span_log2_N, int loops, double **REL_RMS_ERR);
-// void time_elapsed_init(int span_log2_N, int loops);
 void input_buffer(fftwf_complex* in, int N);
-void output_RMS(fftwf_complex *out, int span_log2_N, double **REL_RMS_ERR, int N,
-   int j, int k);
+void output_RMS(fftwf_complex *out, int span_log2_N, double **REL_RMS_ERR,
+  int N, int j, int k);
 void print_RMS(int span_log2_N, int loops, int log2_N, double **REL_RMS_ERR);
 
 int main(int argc, char *argv[]){
@@ -43,11 +41,9 @@ int main(int argc, char *argv[]){
     log2_M = argc>2? atoi(argv[2]) : log2_N + 1; // 8 <= log2_N <= 22
     loops  = argc>3? atoi(argv[3]) : 1;  // test repetitions
     RMS_C  = argc>4? atoi(argv[4]) : 0;  // RMS_controller
-    // BMP_C  = argc>5? atoi(argv[5]) : 0;  // BMP_controller
 
     if (!(argc >= 2 && argc <= 6) || loops < 1 || !(RMS_C >= 0 && RMS_C <= 1)
     || !(log2_N >= 8 && log2_N <= 11 && log2_M <= 12)){
-    //|| !(BMP_C >= 0 && BMP_C <= 1)) {
         printf(Usage);
         return -1;
     }
@@ -65,10 +61,8 @@ int main(int argc, char *argv[]){
            exit(-1);
         }
     }
-
     // initializing 2D, 3D array to 0
     REL_RMS_ERR_init(span_log2_N, loops, (double **)REL_RMS_ERR);
-    // time_elapsed_init(span_log2_N, loops);
     // print out lables for .csv file
     printf("log2_N,Init_T,FFT_T,RMS_T,Total_T\n");
 
@@ -79,10 +73,6 @@ int main(int argc, char *argv[]){
         in = (fftwf_complex *) fftwf_malloc(sizeofblock * sizeof(fftwf_complex));
         out = (fftwf_complex *) fftwf_malloc(sizeofblock * sizeof(fftwf_complex));
 
-        // p = fftwf_plan_dft_1d(N, in, out, FFTW_BACKWARD, FFTW_ESTIMATE);
-
-        // fftw_plan fftwf_plan_dft_2d(int n0, int n1, fftw_complex *in,
-        // fftw_complex *out, int sign, unsigned flags);
         p = fftwf_plan_dft_2d(N, N, in, out, FFTW_BACKWARD, FFTW_ESTIMATE);
 
         for (k = 0; k < loops; k++) {
@@ -103,7 +93,6 @@ int main(int argc, char *argv[]){
         fftwf_free(in);
         fftwf_free(out);
     }
-    // print out REL_RMS_ERR
     if(RMS_C == 1) print_RMS(span_log2_N, loops, log2_N, REL_RMS_ERR);
     return 0;
 }
@@ -152,14 +141,3 @@ void print_RMS(int span_log2_N, int loops, int log2_N, double **REL_RMS_ERR){
     }
     printf("\n");
 }
-// void time_elapsed_init(int span_log2_N, int loops){
-//     int i,j,k;
-//     double time_elapsed[span_log2_N][loops][4]; //3D array
-//     for(i = 0; i < span_log2_N; i++){
-//         for(j = 0; j < loops; j++){
-//             for(k = 0; k < 4; k++){
-//                 time_elapsed[i][j][k] = 0;
-//             }
-//         }
-//     }
-// }
