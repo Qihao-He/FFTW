@@ -69,6 +69,7 @@ int main(int argc, char *argv[]){
             t[0] = Microseconds();
             input_buffer(in, sizeofblock);
 
+            usleep(1);
             t[1] = Microseconds();
             fftwf_execute(p); /* repeat as needed */
             t[2] = Microseconds();
