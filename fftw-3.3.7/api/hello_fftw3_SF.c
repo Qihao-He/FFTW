@@ -20,6 +20,8 @@ char Usage[] =
     "loops  = number of test repeats, loops>0,       default 1\n"
     "RMS_C  = number of test repeats, T(1),F(0),     default 1\n";
 
+double **REL_RMS_ERR;
+
 unsigned Microseconds(void);
 void RMS_malloc(int span_log2_N, int loops);
 void REL_RMS_ERR_init(int span_log2_N, int loops, double **REL_RMS_ERR);
@@ -30,7 +32,7 @@ void print_RMS(int span_log2_N, int loops, int log2_N, double **REL_RMS_ERR);
 
 int main(int argc, char *argv[]){
     int i, j, k, l, loops, freq, log2_N, log2_M, log2_P, N, RMS_C, span_log2_N;
-    double **REL_RMS_ERR;
+
     unsigned t[4];
 
     fftwf_complex *in, *out; //in, out buffer
@@ -48,7 +50,7 @@ int main(int argc, char *argv[]){
     }
 
     span_log2_N = log2_M - log2_N;
-    RMS_malloc(int span_log2_N, int loops);
+    RMS_malloc(span_log2_N, loops);
     // initializing 2D, 3D array to 0
     REL_RMS_ERR_init(span_log2_N, loops, (double **)REL_RMS_ERR);
     // print out lables for .csv file
@@ -90,6 +92,7 @@ unsigned Microseconds(void) {
 }
 
 void RMS_malloc(int span_log2_N, int loops){
+    int i;
     REL_RMS_ERR = (double **)malloc(span_log2_N * sizeof(double *));
     if(REL_RMS_ERR == NULL){
         printf("Malloc failed\n");
