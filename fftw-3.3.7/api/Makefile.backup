@@ -12,8 +12,7 @@
 # even the implied warranty of MERCHANTABILITY or FITNESS FOR A
 # PARTICULAR PURPOSE.
 
-# gcc hello_fftw3_SF.c -lfftw4f -lm -L ../.ilbs -o hello_fftw3_SF.out
-# gcc hello_fftw3_2d_SF.c -lfftw4f -lm -L ../.ilbs -o hello_fftw3_2d_SF.out
+
 
 
 
