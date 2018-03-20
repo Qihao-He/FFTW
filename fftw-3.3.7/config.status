@@ -437,7 +437,7 @@ Copyright (C) 2012 Free Software Foundation, Inc.
 This config.status script is free software; the Free Software Foundation
 gives unlimited permission to copy, distribute and modify it."
 
-ac_pwd='/home/pi/QH_directory/FFTW/fftw-3.3.7'
+ac_pwd='/home/pi/QH_repository/FFTW/fftw-3.3.7'
 srcdir='.'
 INSTALL='/usr/bin/install -c'
 MKDIR_P='/bin/mkdir -p'
@@ -563,10 +563,10 @@ SHELL='/bin/bash'
 ECHO='printf %s\n'
 PATH_SEPARATOR=':'
 host_alias=''
-host='armv6l-unknown-linux-gnueabihf'
+host='armv7l-unknown-linux-gnueabihf'
 host_os='linux-gnueabihf'
 build_alias=''
-build='armv6l-unknown-linux-gnueabihf'
+build='armv7l-unknown-linux-gnueabihf'
 build_os='linux-gnueabihf'
 SED='/bin/sed'
 Xsed='/bin/sed -e 1s/^X//'
@@ -600,9 +600,9 @@ old_postinstall_cmds='chmod 644 $oldlib~$RANLIB $tool_oldlib'
 old_postuninstall_cmds=''
 old_archive_cmds='$AR $AR_FLAGS $oldlib$oldobjs~$RANLIB $tool_oldlib'
 lock_old_archive_extraction='no'
-CC='gcc -std=gnu99'
+CC='gcc'
 CFLAGS='-O3 -fomit-frame-pointer -mtune=native -fstrict-aliasing -fno-schedule-insns -ffast-math'
-compiler='gcc -std=gnu99'
+compiler='gcc'
 GCC='yes'
 lt_cv_sys_global_symbol_pipe='sed -n -e '\''s/^.*[	 ]\([ABCDGIRSTW][ABCDGIRSTW]*\)[	 ][	 ]*\([_A-Za-z][_A-Za-z0-9]*\)$/\1 \2 \2/p'\'' | sed '\''/ __gnu_lto/d'\'''
 lt_cv_sys_global_symbol_to_cdecl='sed -n -e '\''s/^T .* \(.*\)$/extern int \1();/p'\'' -e '\''s/^[ABCDGIRSTW][ABCDGIRSTW]* .* \(.*\)$/extern char \1;/p'\'''
@@ -679,7 +679,7 @@ postuninstall_cmds=''
 finish_cmds='PATH="\$PATH:/sbin" ldconfig -n $libdir'
 finish_eval=''
 hardcode_into_libs='yes'
-sys_lib_search_path_spec='/usr/lib/gcc/arm-linux-gnueabihf/4.9 /usr/lib/arm-linux-gnueabihf /usr/lib /lib/arm-linux-gnueabihf /lib '
+sys_lib_search_path_spec='/usr/lib/gcc/arm-linux-gnueabihf/6 /usr/lib/arm-linux-gnueabihf /usr/lib /lib/arm-linux-gnueabihf /lib '
 configure_time_dlsearch_path='/lib /usr/lib /opt/vc/lib /lib/arm-linux-gnueabihf /usr/lib/arm-linux-gnueabihf /usr/lib/arm-linux-gnueabihf/libfakeroot /usr/local/lib '
 configure_time_lt_sys_library_path=''
 hardcode_action='immediate'
@@ -731,9 +731,9 @@ postlink_cmds_F77=''
 file_list_spec_F77=''
 hardcode_action_F77=''
 
-LTCC='gcc -std=gnu99'
+LTCC='gcc'
 LTCFLAGS='-g -O2'
-compiler='gcc -std=gnu99'
+compiler='gcc'
 
 # A function that is used when there is no print builtin or printf.
 func_fallback_echo ()
@@ -956,7 +956,7 @@ S["MPIRUN"]=""
 S["MPILIBS"]=""
 S["MPICC"]=""
 S["OCAMLBUILD"]=""
-S["CPP"]="gcc -std=gnu99 -E"
+S["CPP"]="gcc -E"
 S["LT_SYS_LIBRARY_PATH"]=""
 S["OTOOL64"]=""
 S["OTOOL"]=""
@@ -996,7 +996,7 @@ S["ac_ct_CC"]="gcc"
 S["CPPFLAGS"]=""
 S["LDFLAGS"]=""
 S["CFLAGS"]="-O3 -fomit-frame-pointer -mtune=native -fstrict-aliasing -fno-schedule-insns -ffast-math"
-S["CC"]="gcc -std=gnu99"
+S["CC"]="gcc"
 S["PREC_SUFFIX"]="f"
 S["HAVE_GENERIC_SIMD256_FALSE"]=""
 S["HAVE_GENERIC_SIMD256_TRUE"]="#"
@@ -1033,12 +1033,12 @@ S["BUILD_DOC_FALSE"]="#"
 S["BUILD_DOC_TRUE"]=""
 S["host_os"]="linux-gnueabihf"
 S["host_vendor"]="unknown"
-S["host_cpu"]="armv6l"
-S["host"]="armv6l-unknown-linux-gnueabihf"
+S["host_cpu"]="armv7l"
+S["host"]="armv7l-unknown-linux-gnueabihf"
 S["build_os"]="linux-gnueabihf"
 S["build_vendor"]="unknown"
-S["build_cpu"]="armv6l"
-S["build"]="armv6l-unknown-linux-gnueabihf"
+S["build_cpu"]="armv7l"
+S["build"]="armv7l-unknown-linux-gnueabihf"
 S["SHARED_VERSION_INFO"]="8:7:5"
 S["MAINT"]="#"
 S["MAINTAINER_MODE_FALSE"]=""
@@ -1057,12 +1057,12 @@ S["mkdir_p"]="$(MKDIR_P)"
 S["MKDIR_P"]="/bin/mkdir -p"
 S["INSTALL_STRIP_PROGRAM"]="$(install_sh) -c -s"
 S["STRIP"]="strip"
-S["install_sh"]="${SHELL} /home/pi/QH_directory/FFTW/fftw-3.3.7/install-sh"
-S["MAKEINFO"]="${SHELL} /home/pi/QH_directory/FFTW/fftw-3.3.7/missing makeinfo"
-S["AUTOHEADER"]="${SHELL} /home/pi/QH_directory/FFTW/fftw-3.3.7/missing autoheader"
-S["AUTOMAKE"]="${SHELL} /home/pi/QH_directory/FFTW/fftw-3.3.7/missing automake-1.15"
-S["AUTOCONF"]="${SHELL} /home/pi/QH_directory/FFTW/fftw-3.3.7/missing autoconf"
-S["ACLOCAL"]="${SHELL} /home/pi/QH_directory/FFTW/fftw-3.3.7/missing aclocal-1.15"
+S["install_sh"]="${SHELL} /home/pi/QH_repository/FFTW/fftw-3.3.7/install-sh"
+S["MAKEINFO"]="${SHELL} /home/pi/QH_repository/FFTW/fftw-3.3.7/missing makeinfo"
+S["AUTOHEADER"]="${SHELL} /home/pi/QH_repository/FFTW/fftw-3.3.7/missing autoheader"
+S["AUTOMAKE"]="${SHELL} /home/pi/QH_repository/FFTW/fftw-3.3.7/missing automake-1.15"
+S["AUTOCONF"]="${SHELL} /home/pi/QH_repository/FFTW/fftw-3.3.7/missing autoconf"
+S["ACLOCAL"]="${SHELL} /home/pi/QH_repository/FFTW/fftw-3.3.7/missing aclocal-1.15"
 S["VERSION"]="3.3.7"
 S["PACKAGE"]="fftw"
 S["CYGPATH_W"]="echo"
@@ -1223,7 +1223,7 @@ D["HAVE_DECL_DRAND48"]=" 1"
 D["HAVE_DECL_SRAND48"]=" 1"
 D["HAVE_DECL_POSIX_MEMALIGN"]=" 1"
 D["HAVE_ISNAN"]=" 1"
-D["FFTW_CC"]=" \"gcc -std=gnu99 -O3 -fomit-frame-pointer -mtune=native -fstrict-aliasing -fno-schedule-insns -ffast-math\""
+D["FFTW_CC"]=" \"gcc -O3 -fomit-frame-pointer -mtune=native -fstrict-aliasing -fno-schedule-insns -ffast-math\""
   for (key in D) D_is_set[key] = 1
   FS = ""
 }

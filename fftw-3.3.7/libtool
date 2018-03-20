@@ -75,12 +75,12 @@ PATH_SEPARATOR=":"
 
 # The host system.
 host_alias=
-host=armv6l-unknown-linux-gnueabihf
+host=armv7l-unknown-linux-gnueabihf
 host_os=linux-gnueabihf
 
 # The build system.
 build_alias=
-build=armv6l-unknown-linux-gnueabihf
+build=armv7l-unknown-linux-gnueabihf
 build_os=linux-gnueabihf
 
 # A sed program that does not truncate output.
@@ -164,7 +164,7 @@ old_postuninstall_cmds=""
 lock_old_archive_extraction=no
 
 # A C compiler.
-LTCC="gcc -std=gnu99"
+LTCC="gcc"
 
 # LTCC compiler flags.
 LTCFLAGS="-O3 -fomit-frame-pointer -mtune=native -fstrict-aliasing -fno-schedule-insns -ffast-math"
@@ -284,7 +284,7 @@ finish_eval=""
 hardcode_into_libs=yes
 
 # Compile-time system search path for libraries.
-sys_lib_search_path_spec="/usr/lib/gcc/arm-linux-gnueabihf/4.9 /usr/lib/arm-linux-gnueabihf /usr/lib /lib/arm-linux-gnueabihf /lib "
+sys_lib_search_path_spec="/usr/lib/gcc/arm-linux-gnueabihf/6 /usr/lib/arm-linux-gnueabihf /usr/lib /lib/arm-linux-gnueabihf /lib "
 
 # Detected run-time system search path for libraries.
 sys_lib_dlsearch_path_spec="/lib /usr/lib /opt/vc/lib /lib/arm-linux-gnueabihf /usr/lib/arm-linux-gnueabihf /usr/lib/arm-linux-gnueabihf/libfakeroot /usr/local/lib "
@@ -317,7 +317,7 @@ reload_cmds="\$LD\$reload_flag -o \$output\$reload_objs"
 old_archive_cmds="\$AR \$AR_FLAGS \$oldlib\$oldobjs~\$RANLIB \$tool_oldlib"
 
 # A language specific compiler.
-CC="gcc -std=gnu99"
+CC="gcc"
 
 # Is the compiler the GNU compiler?
 with_gcc=yes

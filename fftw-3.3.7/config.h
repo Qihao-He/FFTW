@@ -43,7 +43,7 @@
 /* #undef FC_DUMMY_MAIN_EQ_F77 */
 
 /* C compiler name and flags */
-#define FFTW_CC "gcc -std=gnu99 -O3 -fomit-frame-pointer -mtune=native -fstrict-aliasing -fno-schedule-insns -ffast-math"
+#define FFTW_CC "gcc -O3 -fomit-frame-pointer -mtune=native -fstrict-aliasing -fno-schedule-insns -ffast-math"
 
 /* Define to enable extra FFTW debugging code. */
 /* #undef FFTW_DEBUG */
